@@ -9,7 +9,7 @@
 namespace Quiz\Models;
 
 
-class UserModel
+class UserModel extends BaseModel
 {
     /** @var int */
     public $id = 0;

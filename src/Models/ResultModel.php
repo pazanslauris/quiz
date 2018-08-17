@@ -9,7 +9,7 @@
 namespace Quiz\Models;
 
 
-class ResultModel
+class ResultModel extends BaseModel
 {
     /** @var int */
     public $totalAnswers;

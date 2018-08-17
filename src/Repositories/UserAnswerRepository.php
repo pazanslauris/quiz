@@ -9,9 +9,10 @@
 namespace Quiz\Repositories;
 
 
+use Quiz\Interfaces\UserAnswerRepositoryInterface;
 use Quiz\Models\UserAnswerModel;
 
-class UserAnswerRepository
+class UserAnswerRepository implements UserAnswerRepositoryInterface
 {
     /** @var UserAnswerModel[] */
     private $userAnswers = [];
@@ -20,10 +21,12 @@ class UserAnswerRepository
      * Saves an answer, does not validate.
      *
      * @param UserAnswerModel $userAnswer
+     * @return UserAnswerModel
      */
-    public function saveAnswer(UserAnswerModel $userAnswer)
+    public function saveAnswer(UserAnswerModel $userAnswer): UserAnswerModel
     {
         $this->userAnswers[] = $userAnswer;
+        return $userAnswer;
     }
 
     /**

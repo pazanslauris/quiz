@@ -1,24 +1,30 @@
 <?PHP
 
-namespace Quiz;
+namespace Quiz\Services;
 
+use Quiz\Interfaces\AnswerRepositoryInterface;
+use Quiz\Interfaces\QuestionRepositoryInterface;
+use Quiz\Interfaces\QuizRepositoryInterface;
+use Quiz\Interfaces\UserAnswerRepositoryInterface;
+use Quiz\Interfaces\UserRepositoryInterface;
 use Quiz\Models\AnswerModel;
 use Quiz\Models\QuestionModel;
 use Quiz\Models\QuizModel;
 use Quiz\Models\ResultModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Models\UserModel;
-use Quiz\Repositories\QuizRepository;
-use Quiz\Repositories\UserAnswerRepository;
-use Quiz\Repositories\UserRepository;
 
 class QuizService
 {
-    /** @var QuizRepository */
+    /** @var QuizRepositoryInterface */
     private $quizzes;
-    /** @var UserRepository */
+    /** @var QuestionRepositoryInterface */
+    private $questions;
+    /** @var AnswerRepositoryInterface */
+    private $answers;
+    /** @var UserRepositoryInterface */
     private $users;
-    /** @var UserAnswerRepository */
+    /** @var UserAnswerRepositoryInterface */
     private $userAnswers;
 
     /** @var int */
@@ -26,16 +32,22 @@ class QuizService
 
     /**
      * QuizService constructor.
-     * @param QuizRepository $quizzes
-     * @param UserRepository $users
-     * @param UserAnswerRepository $userAnswers
+     * @param QuizRepositoryInterface $quizzes
+     * @param QuestionRepositoryInterface $questions
+     * @param AnswerRepositoryInterface $answers
+     * @param UserRepositoryInterface $users
+     * @param UserAnswerRepositoryInterface $userAnswers
      */
     public function __construct(
-        QuizRepository $quizzes,
-        UserRepository $users,
-        UserAnswerRepository $userAnswers
+        QuizRepositoryInterface $quizzes,
+        QuestionRepositoryInterface $questions,
+        AnswerRepositoryInterface $answers,
+        UserRepositoryInterface $users,
+        UserAnswerRepositoryInterface $userAnswers
     ) {
         $this->quizzes = $quizzes;
+        $this->questions = $questions;
+        $this->answers = $answers;
         $this->users = $users;
         $this->userAnswers = $userAnswers;
     }
@@ -58,7 +70,7 @@ class QuizService
      */
     public function getQuestions(int $quizId): array
     {
-        return $this->quizzes->getQuestions($quizId);
+        return $this->questions->getQuestions($quizId);
     }
 
     /**
@@ -69,7 +81,7 @@ class QuizService
      */
     public function getAnswers(int $questionId): array
     {
-        return $this->quizzes->getAnswers($questionId);
+        return $this->answers->getAnswers($questionId);
     }
 
     /**
@@ -118,7 +130,7 @@ class QuizService
 
         $result->totalAnswers = sizeof($userAnswers);
         $result->correctAnswers = $correctAnswers;
-        $result->user = $this->users->getById($userId);
+        $result->user = $this->users->getUserById($userId);
         $result->quizId = $quizId;
 
         return $result;
@@ -152,7 +164,7 @@ class QuizService
      */
     public function isUserAnswerCorrect(UserAnswerModel $userAnswer): bool
     {
-        $answers = $this->quizzes->getAnswers($userAnswer->questionId);
+        $answers = $this->answers->getAnswers($userAnswer->questionId);
         foreach ($answers as $answer) {
             if ($answer->id == $userAnswer->answerId) {
                 return $answer->isCorrect;
@@ -170,7 +182,7 @@ class QuizService
      */
     public function isExistingUser(int $userId): bool
     {
-        $existingUser = $this->users->getById($userId);
+        $existingUser = $this->users->getUserById($userId);
         return $existingUser->isValid();
     }
 
@@ -194,7 +206,7 @@ class QuizService
      */
     public function isExistingQuestion(int $questionId): bool
     {
-        $existingQuestion = $this->quizzes->getQuestion($questionId);
+        $existingQuestion = $this->questions->getQuestion($questionId);
         return $existingQuestion->isValid();
     }
 
@@ -206,7 +218,7 @@ class QuizService
      */
     public function isExistingAnswer(int $answerId): bool
     {
-        $existingAnswer = $this->quizzes->getAnswer($answerId);
+        $existingAnswer = $this->answers->getAnswer($answerId);
         return $existingAnswer->isValid();
     }
 
@@ -219,7 +231,7 @@ class QuizService
      */
     public function isQuizCompleted(int $userId, int $quizId): bool
     {
-        $questionCount = sizeof($this->quizzes->getQuestions($quizId));
+        $questionCount = sizeof($this->questions->getQuestions($quizId));
 
         $answeredQuestionCount = sizeof($this->userAnswers->getAnswers($userId, $quizId));
 

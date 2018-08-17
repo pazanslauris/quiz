@@ -8,9 +8,10 @@
 
 namespace Quiz\Repositories;
 
+use Quiz\Interfaces\UserRepositoryInterface;
 use Quiz\Models\UserModel;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
     /** @var UserModel[] */
     private $users = [];
@@ -26,7 +27,7 @@ class UserRepository
      */
     public function saveOrCreate(UserModel $user): UserModel
     {
-        $existingUser = $this->getById($user->id);
+        $existingUser = $this->getUserById($user->id);
 
         if ($existingUser->isNew()) {
             $this->userIds++;
@@ -46,7 +47,7 @@ class UserRepository
      * @param int $userId
      * @return UserModel
      */
-    public function getById(int $userId): UserModel
+    public function getUserById(int $userId): UserModel
     {
         if (isset($this->users[$userId])) {
             return $this->users[$userId];

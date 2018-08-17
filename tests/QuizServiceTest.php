@@ -8,7 +8,9 @@ use Quiz\Models\QuestionModel;
 use Quiz\Models\QuizModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Models\UserModel;
-use Quiz\QuizService;
+use Quiz\Services\QuizService;
+use Quiz\Repositories\AnswerRepository;
+use Quiz\Repositories\QuestionRepository;
 use Quiz\Repositories\QuizRepository;
 use Quiz\Repositories\UserAnswerRepository;
 use Quiz\Repositories\UserRepository;
@@ -29,6 +31,30 @@ class QuizServiceTest extends TestCase
     /** @var int */
     public $quizId;
 
+
+    private $data = [
+        'Country capitals' => [
+            'Latvia' => [
+                'Riga' => true,
+                'Ventspils' => false,
+                'Jurmala' => false,
+                'Daugavpils' => false,
+            ],
+            'Lithuania' => [
+                'Kaunas' => false,
+                'Siaulia' => false,
+                'Vilnius' => true,
+                'Mazeikiai' => false,
+            ],
+            'Estonia' => [
+                'Talling' => true,
+                'Paarnu' => false,
+                'Tartu' => false,
+                'Valga' => false,
+            ],
+        ],
+    ];
+
     /**
      * Creates a QuizRepository and loads it with some test data.
      *
@@ -37,61 +63,70 @@ class QuizServiceTest extends TestCase
     private function initTestQuizRepo(): QuizRepository
     {
         $repo = new QuizRepository;
-
-        $data = [
-            'Country capitals' => [
-                'Latvia' => [
-                    'Riga' => true,
-                    'Ventspils' => false,
-                    'Jurmala' => false,
-                    'Daugavpils' => false,
-                ],
-                'Lithuania' => [
-                    'Kaunas' => false,
-                    'Siaulia' => false,
-                    'Vilnius' => true,
-                    'Mazeikiai' => false,
-                ],
-                'Estonia' => [
-                    'Talling' => true,
-                    'Paarnu' => false,
-                    'Tartu' => false,
-                    'Valga' => false,
-                ],
-            ],
-        ];
-
-
         $quizIds = 0;
-        $questionIds = 0;
-        $answerIds = 0;
 
-        foreach ($data as $quizTitle => $questions) {
+        foreach ($this->data as $quizTitle => $questions) {
             $quiz = new QuizModel;
             $quiz->id = ++$quizIds;
             $quiz->name = $quizTitle;
 
             $repo->addQuiz($quiz);
-            //$this->testQuizes[] = $quiz;
+        }
 
+        return $repo;
+    }
+
+    /**
+     * Creates a QuestionRepository and loads it with some test data.
+     *
+     * @return QuestionRepository
+     */
+    private function initTestQuestionRepo(): QuestionRepository
+    {
+        $repo = new QuestionRepository();
+        $quizIds = 0;
+        $questionIds = 0;
+
+        foreach ($this->data as $quizTitle => $questions) {
+            ++$quizIds;
             foreach ($questions as $questionText => $answers) {
                 $question = new QuestionModel;
-                $question->quizId = $quiz->id;
+                $question->quizId = $quizIds;
                 $question->id = ++$questionIds;
                 $question->question = $questionText;
 
                 $repo->addQuestion($question);
-                //$this->testQuestions[] = $question;
+            }
+        }
 
+        return $repo;
+    }
+
+    /**
+     * Creates an AnswerRepository and loads it with some test data.
+     *
+     * @return AnswerRepository
+     */
+    private function initTestAnswerRepo(): AnswerRepository
+    {
+        $repo = new AnswerRepository();
+
+        $quizIds = 0;
+        $questionIds = 0;
+        $answerIds = 0;
+
+        foreach ($this->data as $quizTitle => $questions) {
+            ++$quizIds;
+            foreach ($questions as $questionText => $answers) {
+                ++$questionIds;
                 foreach ($answers as $answerText => $isCorrect) {
                     $a = new AnswerModel;
                     $a->id = ++$answerIds;
                     $a->answer = $answerText;
                     $a->isCorrect = $isCorrect;
-                    $a->questionId = $question->id;
+                    $a->questionId = $questionIds;
 
                     $repo->addAnswer($a);
-                    //$this->testAnswers[] = $a;
                 }
             }
         }
@@ -127,7 +162,9 @@ class QuizServiceTest extends TestCase
         parent::setUp();
 
         $quizRepo = $this->initTestQuizRepo();
-        $this->service = new QuizService($quizRepo, new UserRepository, new UserAnswerRepository);
+        $questionRepo = $this->initTestQuestionRepo();
+        $answerRepo = $this->initTestAnswerRepo();
+        $this->service = new QuizService($quizRepo, $questionRepo, $answerRepo, new UserRepository, new UserAnswerRepository);
         $this->user = $this->service->registerUser('test user');
 
         $this->quizId = 1;

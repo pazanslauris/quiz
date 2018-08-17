@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Quiz\Models\AnswerModel;
 use Quiz\Models\QuestionModel;
 use Quiz\Models\QuizModel;
+use Quiz\Repositories\AnswerRepository;
+use Quiz\Repositories\QuestionRepository;
 use Quiz\Repositories\QuizRepository;
 
 
@@ -114,7 +116,7 @@ class QuizRepositoryTest extends TestCase
 
     public function testGetQuestions()
     {
-        $repo = new QuizRepository;
+        $repo = new QuestionRepository;
         $quizId = $this->testQuizzes[0]->id;
 
         foreach ($this->testQuestions as $question) {
@@ -129,7 +131,7 @@ class QuizRepositoryTest extends TestCase
     public function testGetQuestion()
     {
         $questionId = 20;
-        $repo = new QuizRepository;
+        $repo = new QuestionRepository;
         $singleQuestion = new QuestionModel($questionId, 'test question', 1);
         //Add the single question
         $repo->addQuestion($singleQuestion);
@@ -146,7 +148,7 @@ class QuizRepositoryTest extends TestCase
 
     public function testGetAnswers()
     {
-        $repo = new QuizRepository;
+        $repo = new AnswerRepository;
 
         //bulk add
         foreach ($this->testAnswers as $answer) {
@@ -161,7 +163,7 @@ class QuizRepositoryTest extends TestCase
 
     public function testGetAnswer()
     {
-        $repo = new QuizRepository;
+        $repo = new AnswerRepository();
 
         //individual answer
         $singleAnswer = new AnswerModel;

@@ -11,7 +11,8 @@
     "autoload": {
         "psr-4": {
             "Quiz\\": "src/",
-            "Quiz\\Tests\\": "tests/"
+            "Quiz\\Tests\\": "tests/",
+            "Bowl\\": "bowling/"
         }
     },
     "require-dev": {
