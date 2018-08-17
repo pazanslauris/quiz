@@ -56,6 +56,9 @@ class QuestionDBRepository extends BaseDBRepository implements QuestionRepositor
     {
         $question = $this->getByConditions(['quiz_id' => $quizId, 'question_no' => $questionNo],
             ['id', 'question', 'quiz_id', 'question_no']);
+        if ($question == []) {
+            return new QuestionModel();
+        }
         return array_shift($question);
     }
 

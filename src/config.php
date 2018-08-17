@@ -6,3 +6,4 @@ define('VIEW_DIR', BASE_DIR . '/public/views');
 
 $baseUrl = 'http://quiz.test/';
 $controllerNamespace = 'Quiz\\Controllers\\';
+

@@ -3,11 +3,21 @@
 namespace Quiz\Controllers;
 
 
+use Quiz\Services\QuizService;
+
 abstract class BaseController
 {
     protected $action;
     protected $post;
     protected $get;
+
+    /** @var QuizService */
+    protected $quizService;
+
+    public function __construct(QuizService $quizService)
+    {
+        $this->quizService = $quizService;
+    }
 
     /**
      * @param string $action

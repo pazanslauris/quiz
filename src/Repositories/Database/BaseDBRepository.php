@@ -6,6 +6,7 @@ namespace Quiz\Repositories\Database;
 use Quiz\Database\MysqlConnection;
 use Quiz\Interfaces\ConnectionInterface;
 use Quiz\Interfaces\DBRepositoryInterface;
+use Quiz\Models\BaseModel;
 
 abstract class BaseDBRepository implements DBRepositoryInterface
 {
@@ -25,40 +26,17 @@ abstract class BaseDBRepository implements DBRepositoryInterface
     }
 
     /**
-     * Convert snake_case to camelCase
-     *
-     * @param $name
-     * @return mixed|string
-     */
-    private function snakeToCamel($name)
-    {
-        $exploded = explode('_', $name);
-        $ret = array_shift($exploded);
-        foreach ($exploded as $word) {
-            $ret = $ret . ucfirst($word);
-        }
-        return $ret;
-    }
-
-    /**
      * Initializes a new model
      *
      * @param array $attributes
-     * @return model based on the current repository
+     * @return BaseModel based on the current repository
      */
     private function init(array $attributes)
     {
         $class = static::getModelName();
+        /** @var BaseModel $instance */
         $instance = new $class;
-
-        //as $key => $value
-        foreach ($attributes as $name => $value) {
-            $name = $this->snakeToCamel($name);
-            if (property_exists($class, $name)) {
-                $instance->$name = htmlspecialchars($value);
-            }
-        }
-
+        $instance->setAttributes($attributes);
         return $instance;
     }
 
@@ -162,5 +140,15 @@ abstract class BaseDBRepository implements DBRepositoryInterface
 
         $result = static::getConnection()->update($table, $primaryKey, $attributes);
         return $result;
+    }
+
+    public function save($model): int
+    {
+        //TODO: implement
+        //fetch columns
+        //  exclude primarykey
+        //cameltosnake
+        //insertRow
+        //return id
     }
 }

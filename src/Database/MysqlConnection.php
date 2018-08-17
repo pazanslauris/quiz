@@ -135,11 +135,21 @@ class MysqlConnection implements ConnectionInterface
         $sql = "UPDATE " . $table . " SET " . $sqlAttributes . $sqlCondition;
 
         $statement = $this->connection->prepare($sql);
-        return $statement->execute(array_values($attributes));;
+        return $statement->execute(array_values($attributes));
     }
 
+    /**
+     * Fetches columns
+     *
+     * @param string $table
+     * @return array
+     */
     public function fetchColumns(string $table): array
     {
-        // TODO: Implement fetchColumns() method.
+        $sql = "DESCRIBE " . $table;
+        $statement = $this->connection->prepare($sql);
+        $statement->execute();
+        $columns = $statement->fetchAll();
+        return $columns;
     }
 }

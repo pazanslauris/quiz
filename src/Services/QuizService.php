@@ -53,6 +53,17 @@ class QuizService
     }
 
     /**
+     * Gets user by id
+     *
+     * @param int $userId
+     * @return UserModel
+     */
+    public function getUser(int $userId): UserModel
+    {
+        return $this->users->getUserById($userId);
+    }
+
+    /**
      * Gets all quizzes
      *
      * @return QuizModel[]
@@ -71,6 +82,18 @@ class QuizService
     public function getQuestions(int $quizId): array
     {
         return $this->questions->getQuestions($quizId);
+    }
+
+    /**
+     * Gets a question by id
+     *
+     * @param int $quizId
+     * @param int $questionNo
+     * @return QuestionModel
+     */
+    public function getQuestionByNo(int $quizId, int $questionNo): QuestionModel
+    {
+        return $this->questions->getQuestionByNo($quizId, $questionNo);
     }
 
     /**

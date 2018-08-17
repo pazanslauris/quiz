@@ -8,10 +8,12 @@ use Quiz\Repositories\Database\QuizDBRepository;
 use Quiz\Repositories\Database\UserAnswerDBRepository;
 use Quiz\Repositories\Database\UserDBRepository;
 use Quiz\Services\QuizService;
+use Quiz\Services\QuizSessionService;
 
 class AjaxController extends BaseAjaxController
 {
-    public function indexAction() {
+    public function indexAction()
+    {
         return 'hey';
     }
 
@@ -32,6 +34,8 @@ class AjaxController extends BaseAjaxController
             new UserAnswerDBRepository());
 
         $user = $service->registerUser($name);
+        $session = QuizSessionService::getSession();
+        $session->userId = $user->id;
         return $user;
     }
 
