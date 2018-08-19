@@ -8,6 +8,7 @@ use Quiz\Models\QuestionModel;
 use Quiz\Models\QuizModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Models\UserModel;
+use Quiz\Repositories\QuizResultRepository;
 use Quiz\Services\QuizService;
 use Quiz\Repositories\AnswerRepository;
 use Quiz\Repositories\QuestionRepository;
@@ -164,7 +165,14 @@ class QuizServiceTest extends TestCase
         $quizRepo = $this->initTestQuizRepo();
         $questionRepo = $this->initTestQuestionRepo();
         $answerRepo = $this->initTestAnswerRepo();
-        $this->service = new QuizService($quizRepo, $questionRepo, $answerRepo, new UserRepository, new UserAnswerRepository);
+        $this->service = new QuizService(
+            $quizRepo,
+            $questionRepo,
+            $answerRepo,
+            new UserRepository,
+            new UserAnswerRepository,
+            new QuizResultRepository);
+
         $this->user = $this->service->registerUser('test user');
 
         $this->quizId = 1;
@@ -175,7 +183,7 @@ class QuizServiceTest extends TestCase
         $service = $this->service;
 
         //There is 1 quiz in the test data.
-        $quizzes = $service->getQuizzes();
+        $quizzes = $service->getAllQuizzes();
         self::assertCount(1, $quizzes);
     }
 
@@ -307,6 +315,7 @@ class QuizServiceTest extends TestCase
         $this->initTestUserAnswers();
 
         //Assert
+        $service->submitResult($userId, $quizId);
         $result = $service->getResult($userId, $quizId);
         self::assertEquals(2, $result->correctAnswers);
         self::assertEquals(3, $result->totalAnswers);
@@ -321,6 +330,7 @@ class QuizServiceTest extends TestCase
         $this->initTestUserAnswers();
 
         //Assert
+        $service->submitResult($userId, $quizId);
         $score = $service->getScore($userId, $quizId);
         $expectedScore = round((2 / 3) * 100);
         self::assertEquals($expectedScore, $score);

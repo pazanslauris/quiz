@@ -5,6 +5,7 @@ namespace Quiz\Services;
 use Quiz\Interfaces\AnswerRepositoryInterface;
 use Quiz\Interfaces\QuestionRepositoryInterface;
 use Quiz\Interfaces\QuizRepositoryInterface;
+use Quiz\Interfaces\QuizResultRepositoryInterface;
 use Quiz\Interfaces\UserAnswerRepositoryInterface;
 use Quiz\Interfaces\UserRepositoryInterface;
 use Quiz\Models\AnswerModel;
@@ -13,6 +14,8 @@ use Quiz\Models\QuizModel;
 use Quiz\Models\ResultModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Models\UserModel;
+
+//TODO: refactor / split the service up
 
 class QuizService
 {
@@ -26,9 +29,8 @@ class QuizService
     private $users;
     /** @var UserAnswerRepositoryInterface */
     private $userAnswers;
-
-    /** @var int */
-    private $userAnswerId = 1;
+    /** @var QuizResultRepositoryInterface */
+    private $results;
 
     /**
      * QuizService constructor.
@@ -37,19 +39,22 @@ class QuizService
      * @param AnswerRepositoryInterface $answers
      * @param UserRepositoryInterface $users
      * @param UserAnswerRepositoryInterface $userAnswers
+     * @param QuizResultRepositoryInterface $results
      */
     public function __construct(
         QuizRepositoryInterface $quizzes,
         QuestionRepositoryInterface $questions,
         AnswerRepositoryInterface $answers,
         UserRepositoryInterface $users,
-        UserAnswerRepositoryInterface $userAnswers
+        UserAnswerRepositoryInterface $userAnswers,
+        QuizResultRepositoryInterface $results
     ) {
         $this->quizzes = $quizzes;
         $this->questions = $questions;
         $this->answers = $answers;
         $this->users = $users;
         $this->userAnswers = $userAnswers;
+        $this->results = $results;
     }
 
     /**
@@ -68,9 +73,28 @@ class QuizService
      *
      * @return QuizModel[]
      */
-    public function getQuizzes(): array
+    public function getAllQuizzes(): array
     {
-        return $this->quizzes->getQuizzes();
+        $allQuizzes = $this->quizzes->getQuizzes();
+        return $allQuizzes;
+    }
+
+    /**
+     * Gets all quizzes that are not yet completed
+     *
+     * @param int $userId
+     * @return QuizModel[]
+     */
+    public function getAvailableQuizzes(int $userId): array
+    {
+        $allQuizzes = $this->quizzes->getQuizzes();
+        $availableQuizzes = [];
+        foreach ($allQuizzes as $quiz) {
+            if (!$this->isQuizCompleted($userId, $quiz->id)) {
+                $availableQuizzes[] = $quiz;
+            }
+        }
+        return $availableQuizzes;
     }
 
     /**
@@ -133,6 +157,53 @@ class QuizService
     }
 
     /**
+     * Gets the correct answer count form the supplied user answers.
+     *
+     * @param UserAnswerModel[] $userAnswers
+     * @return int
+     */
+    public function getCorrectAnswerCount(array $userAnswers): int
+    {
+        $correctAnswers = 0;
+        foreach ($userAnswers as $userAnswer) {
+            if ($this->isUserAnswerCorrect($userAnswer)) {
+                $correctAnswers++;
+            }
+        }
+        return $correctAnswers;
+    }
+
+    /**
+     * Returns the count of answered questions in a quiz.
+     *
+     * @param int $userId
+     * @param int $quizId
+     * @return int
+     */
+    public function getAnsweredQuestionCount(int $userId, int $quizId): int
+    {
+        $answeredQuestionCount = sizeof($this->userAnswers->getAnswers($userId, $quizId));
+        return $answeredQuestionCount;
+    }
+
+    /**
+     * Gets the next question
+     *
+     * Returns an invalid question if the quiz is complete.
+     *
+     * @param int $userId
+     * @param int $quizId
+     * @return QuestionModel
+     */
+    public function getNextQuestion(int $userId, int $quizId): QuestionModel
+    {
+        $currentQuestionNo = $this->getAnsweredQuestionCount($userId, $quizId);
+        $nextQuestion = $this->getQuestionByNo($quizId, $currentQuestionNo + 1);
+
+        return $nextQuestion;
+    }
+
+    /**
      * Gets quiz result
      *
      * @param int $userId
@@ -141,21 +212,7 @@ class QuizService
      */
     public function getResult(int $userId, int $quizId): ResultModel
     {
-        $result = new ResultModel;
-        $userAnswers = $this->userAnswers->getAnswers($userId, $quizId);
-
-        $correctAnswers = 0;
-        foreach ($userAnswers as $userAnswer) {
-            if ($this->isUserAnswerCorrect($userAnswer)) {
-                $correctAnswers++;
-            }
-        }
-
-        $result->totalAnswers = sizeof($userAnswers);
-        $result->correctAnswers = $correctAnswers;
-        $result->user = $this->users->getUserById($userId);
-        $result->quizId = $quizId;
-
+        $result = $this->results->getResult($userId, $quizId);
         return $result;
     }
 
@@ -254,11 +311,8 @@ class QuizService
      */
     public function isQuizCompleted(int $userId, int $quizId): bool
     {
-        $questionCount = sizeof($this->questions->getQuestions($quizId));
-
-        $answeredQuestionCount = sizeof($this->userAnswers->getAnswers($userId, $quizId));
-
-        return ($questionCount === $answeredQuestionCount);
+        $result = $this->results->getResult($userId, $quizId);
+        return $result->isValid();
     }
 
     /**
@@ -329,9 +383,34 @@ class QuizService
         }
 
         //Submit the answer...
-        $userAnswer->id = $this->userAnswerId++;
         $this->userAnswers->saveAnswer($userAnswer);
         return $userAnswer;
     }
 
+    /**
+     * Calculates and submits a result from a quiz
+     *
+     * @param int $userId
+     * @param int $quizId
+     * @return ResultModel
+     */
+    public function submitResult(int $userId, int $quizId): ResultModel
+    {
+        $userAnswers = $this->userAnswers->getAnswers($userId, $quizId);
+        $totalQuestionCount = sizeof($this->questions->getQuestions($quizId));
+
+        if ($totalQuestionCount != sizeof($userAnswers)) {
+            //Quiz isn't completed yet...
+            return new ResultModel;
+        }
+
+        $result = new ResultModel;
+
+        $result->totalAnswers = $totalQuestionCount;
+        $result->correctAnswers = $this->getCorrectAnswerCount($userAnswers);
+        $result->userId = $userId;
+        $result->quizId = $quizId;
+
+        return $this->results->saveResult($result);
+    }
 }

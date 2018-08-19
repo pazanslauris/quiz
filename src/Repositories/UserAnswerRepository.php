@@ -17,6 +17,9 @@ class UserAnswerRepository implements UserAnswerRepositoryInterface
     /** @var UserAnswerModel[] */
     private $userAnswers = [];
 
+    /** @var int */
+    private $userAnswerId = 1;
+
     /**
      * Saves an answer, does not validate.
      *
@@ -25,6 +28,7 @@ class UserAnswerRepository implements UserAnswerRepositoryInterface
      */
     public function saveAnswer(UserAnswerModel $userAnswer): UserAnswerModel
     {
+        $userAnswer->id = $this->userAnswerId++;
         $this->userAnswers[] = $userAnswer;
         return $userAnswer;
     }

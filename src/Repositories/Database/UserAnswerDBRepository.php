@@ -11,7 +11,6 @@ class UserAnswerDBRepository extends BaseDBRepository implements UserAnswerRepos
 
     public function saveAnswer(UserAnswerModel $userAnswer): UserAnswerModel
     {
-        //TODO: CREATED_AT DEFAULT VALUE!!!
         $id = $this->insertRow([
             'user_id' => $userAnswer->userId,
             'quiz_id' => $userAnswer->quizId,

@@ -21,7 +21,7 @@ use Quiz\Models\UserModel;
     <button id="send-req" onclick="sendAjax('QuizAjax/getQuizzes')">Send QuizAjax/getQuizzes</button>
     <br>
     <br>
-    <button id="send-req" onclick="startQuiz(1)">Send QuizAjax/start</button>
+    <button id="send-req" onclick="startQuiz(1)">Send QuizAjax/startQuiz</button>
     <button id="send-req" onclick="getNextQuestion(1)">Send QuizAjax/nextQuestion</button>
 
 
@@ -58,7 +58,7 @@ use Quiz\Models\UserModel;
                 resp.innerText = this.responseText;
             }
         };
-        xhr.open('POST', 'QuizAjax/start', true);
+        xhr.open('POST', 'QuizAjax/startQuiz', true);
         var data = new FormData;
         data.append('quizId', id);
         xhr.send(data);

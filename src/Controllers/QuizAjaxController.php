@@ -2,46 +2,61 @@
 
 namespace Quiz\Controllers;
 
-
 use Quiz\Models\QuestionModel;
+use Quiz\Models\QuizModel;
 use Quiz\Models\UserAnswerModel;
-use Quiz\Repositories\Database\AnswerDBRepository;
-use Quiz\Repositories\Database\QuestionDBRepository;
-use Quiz\Repositories\Database\QuizDBRepository;
-use Quiz\Repositories\Database\UserAnswerDBRepository;
-use Quiz\Repositories\Database\UserDBRepository;
-use Quiz\Services\QuizService;
 use Quiz\Services\QuizSessionService;
 
 class QuizAjaxController extends BaseAjaxController
 {
+    /**
+     * Returns all available(uncompleted) quizzes.
+     *
+     * @return array|QuizModel[]
+     */
     public function getQuizzesAction()
     {
-        $service = new QuizService(new QuizDBRepository(),
-            new QuestionDBRepository(),
-            new AnswerDBRepository(),
-            new UserDBRepository(),
-            new UserAnswerDBRepository());
+        $session = QuizSessionService::getSession();
 
-        $quizzes = $service->getQuizzes();
+        $quizzes = $this->quizService->getAvailableQuizzes($session->userId);
         return $quizzes;
     }
 
-    public function startAction()
+    /**
+     * Starts a new quiz
+     *
+     * @return int|string
+     */
+    public function startQuizAction()
     {
+        $session = QuizSessionService::getSession();
+        if ($session->userId == 0) {
+            return false;
+        }
+
         //TODO: validator
         if (!isset($this->post['quizId'])) {
-            return "";
+            return false;
         }
         $quizId = $this->post['quizId'];
 
-        $session = QuizSessionService::getSession();
+        //Check if quiz is already completed
+        if ($this->quizService->isQuizCompleted($session->userId, $quizId)) {
+            return false;
+        }
+
         $session->question = new QuestionModel();
         $session->quizId = $quizId;
-        return $session->userId;
+        return true;
     }
 
-    private function submitUserAnswer(int $answerId)
+    /**
+     * Submits a user answer using the session variables
+     *
+     * @param int $answerId
+     * @return UserAnswerModel
+     */
+    private function submitUserAnswer(int $answerId): UserAnswerModel
     {
         $session = QuizSessionService::getSession();
 
@@ -50,31 +65,61 @@ class QuizAjaxController extends BaseAjaxController
         $userAnswer->quizId = $session->quizId;
         $userAnswer->questionId = $session->question->id;
         $userAnswer->answerId = $answerId;
-        $this->quizService->submitAnswer($userAnswer);
+        return $this->quizService->submitAnswer($userAnswer);
     }
 
-    public function submitAndLoadNextQuestionAction()
+    /**
+     * Returns the next question or score if the quiz is complete.
+     *
+     * @return QuestionModel|string
+     */
+    public function loadNextQuestionAction()
     {
-        if (!isset($this->post['answerId'])) {
-            return "no answer";
-        }
         $session = QuizSessionService::getSession();
-        $answerId = $this->post['answerId'];
-
-        if($session->question->isValid()) {
-            //validate
-            $this->submitUserAnswer($answerId);
-        }
-        $nextQuestionNo = $session->question->questionNo + 1;
-            $session->question = $this->quizService->getQuestionByNo($session->quizId, $nextQuestionNo);
+        $session->question = $this->quizService->getNextQuestion($session->userId, $session->quizId);
 
         if ($session->question->isValid()) {
             //return question
             return $session->question;
         } else {
             //quiz is over
+            $this->quizService->submitResult($session->userId, $session->quizId);
             $score = $this->quizService->getScore($session->userId, $session->quizId);
             return $score . "%";
         }
+    }
+
+    /**
+     * Submits a user answer
+     *
+     * @return bool
+     */
+    public function submitAnswerAction()
+    {
+        if (!isset($this->post['answerId'])) {
+            return false;
+        }
+        $session = QuizSessionService::getSession();
+        $answerId = $this->post['answerId'];
+
+        if ($session->question->isValid()) {
+            $userAnswer = $this->submitUserAnswer($answerId);
+            return $userAnswer->isValid();
+        }
+        return false;
+    }
+
+    /**
+     * Submits a user answer and loads the next question.
+     *
+     * @return QuestionModel|string
+     */
+    public function submitAndLoadNextQuestionAction()
+    {
+        //Submit an answer if one is supplied...
+        $this->submitAnswerAction();
+
+        //Load the next question...
+        return $this->loadNextQuestionAction();
     }
 }
