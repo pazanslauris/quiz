@@ -380,6 +380,8 @@ class QuizServiceTest extends TestCase
         $userAnswer->questionId = 3;
         $userAnswer->answerId = 9;
         $service->submitAnswer($userAnswer); //correct(talling)
+
+        $service->submitResult($userId, $quizId);
         self::assertTrue($service->isQuizCompleted($userId, $quizId));
     }
 }
