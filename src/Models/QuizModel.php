@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/14/2018
- * Time: 10:07 AM
- */
 
 namespace Quiz\Models;
 

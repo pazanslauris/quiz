@@ -22,6 +22,13 @@ $controllerName = $controllerNamespace . ($controllerName ? $controllerName : 'I
 $actionName = array_shift($urlParams);
 $actionName = ($actionName ? $actionName : 'Index') . 'Action';
 
+$content = explode(';', $_SERVER["CONTENT_TYPE"]);
+$contentType = array_shift($content);
+if ($contentType == "application/json") {
+    $_POST = json_decode(file_get_contents('php://input'), true);
+}
+
+//TODO: Dependency injection
 /** @var BaseController $controller */
 $controller = new $controllerName(new QuizService(new QuizDBRepository(),
     new QuestionDBRepository(),

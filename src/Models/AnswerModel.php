@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/14/2018
- * Time: 10:13 AM
- */
 
 namespace Quiz\Models;
 
@@ -21,7 +15,7 @@ class AnswerModel extends BaseModel
     public $questionId;
 
     /** @var bool */
-    public $isCorrect;
+    public $isCorrect; //should be made private to prevent accidental leaks.
 
 
     /**
@@ -39,11 +33,23 @@ class AnswerModel extends BaseModel
         $this->isCorrect = $isCorrect;
     }
 
+
     /**
      * @return bool
      */
     public function isValid(): bool
     {
         return ($this->id !== 0);
+    }
+
+    /**
+     * Strips sensitive data
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        $answer = clone $this;
+        unset($answer->isCorrect);
+        return (array)$answer;
     }
 }

@@ -3,7 +3,7 @@
 namespace Quiz\Controllers;
 
 use Quiz\Models\QuestionModel;
-use Quiz\Models\QuizModel;
+use Quiz\Models\ResponseModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Services\QuizSessionService;
 
@@ -12,42 +12,51 @@ class QuizAjaxController extends BaseAjaxController
     /**
      * Returns all available(uncompleted) quizzes.
      *
-     * @return array|QuizModel[]
+     * @return ResponseModel
      */
     public function getQuizzesAction()
     {
-        $session = QuizSessionService::getSession();
+        //$session = QuizSessionService::getSession();
 
-        $quizzes = $this->quizService->getAvailableQuizzes($session->userId);
-        return $quizzes;
+        //$quizzes = $this->quizService->getAvailableQuizzes($session->userId);
+        $quizzes = $this->quizService->getAllQuizzes();
+        $response = new ResponseModel('quizzes', $quizzes);
+        return $response;
     }
 
     /**
      * Starts a new quiz
      *
-     * @return int|string
+     * @return ResponseModel
      */
     public function startQuizAction()
     {
         $session = QuizSessionService::getSession();
-        if ($session->userId == 0) {
-            return false;
-        }
 
         //TODO: validator
         if (!isset($this->post['quizId'])) {
-            return false;
+            return new ResponseModel('errorMsg', "no quiz id");
         }
         $quizId = $this->post['quizId'];
+        if ($session->userId == 0) {
+            if (!isset($this->post['name'])) {
+                return new ResponseModel('errorMsg', "no name");
+            }
+            $session->userId = $this->quizService->registerUser($this->post['name'])->id;
+        }
+
 
         //Check if quiz is already completed
         if ($this->quizService->isQuizCompleted($session->userId, $quizId)) {
-            return false;
+            //return new ResponseModel( 'errorMsg', "Quiz is already completed");
+            return $this->getResultAction();
         }
 
         $session->question = new QuestionModel();
         $session->quizId = $quizId;
-        return true;
+
+        //Return the 1st(or resume from another) question
+        return $this->loadNextQuestionAction();
     }
 
     /**
@@ -71,7 +80,7 @@ class QuizAjaxController extends BaseAjaxController
     /**
      * Returns the next question or score if the quiz is complete.
      *
-     * @return QuestionModel|string
+     * @return ResponseModel
      */
     public function loadNextQuestionAction()
     {
@@ -79,40 +88,44 @@ class QuizAjaxController extends BaseAjaxController
         $session->question = $this->quizService->getNextQuestion($session->userId, $session->quizId);
 
         if ($session->question->isValid()) {
-            //return question
-            return $session->question;
+            $answers = $this->quizService->getAnswers($session->question->id);
+            $response = new ResponseModel('question', [
+                'question' => $session->question,
+                'answers' => $answers
+            ]);
+            return $response;
         } else {
             //quiz is over
             $this->quizService->submitResult($session->userId, $session->quizId);
-            $score = $this->quizService->getScore($session->userId, $session->quizId);
-            return $score . "%";
+            return $this->getResultAction();
         }
     }
 
     /**
      * Submits a user answer
      *
-     * @return bool
+     * @return ResponseModel
      */
     public function submitAnswerAction()
     {
         if (!isset($this->post['answerId'])) {
-            return false;
+            return new ResponseModel('errorMsg', "answerId wasn't set");
         }
         $session = QuizSessionService::getSession();
         $answerId = $this->post['answerId'];
 
         if ($session->question->isValid()) {
             $userAnswer = $this->submitUserAnswer($answerId);
-            return $userAnswer->isValid();
+            $status = $userAnswer->isValid();
+            return new ResponseModel('status', $status);
         }
-        return false;
+        return new ResponseModel('errorMsg', "current question is invalid");
     }
 
     /**
      * Submits a user answer and loads the next question.
      *
-     * @return QuestionModel|string
+     * @return ResponseModel
      */
     public function submitAndLoadNextQuestionAction()
     {
@@ -121,5 +134,37 @@ class QuizAjaxController extends BaseAjaxController
 
         //Load the next question...
         return $this->loadNextQuestionAction();
+    }
+
+    /**
+     * Returns the result of a quiz(defaults to the current selected quiz).
+     *
+     * @return ResponseModel
+     */
+    public function getResultAction()
+    {
+        $session = QuizSessionService::getSession();
+
+        if (isset($this->post['quizId'])) {
+            $quizId = $this->post['quizId'];
+        } else {
+            $quizId = $session->quizId;
+        }
+
+        $result = $this->quizService->getResult($session->userId, $quizId);
+
+        $response = new ResponseModel('result', $result);
+        return $response;
+    }
+
+    /**
+     * Logs a user out...
+     *
+     * @return ResponseModel
+     */
+    public function logoutAction()
+    {
+        QuizSessionService::endSession();
+        return new ResponseModel('status', true);
     }
 }

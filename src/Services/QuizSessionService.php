@@ -23,7 +23,11 @@ class QuizSessionService
 
     public static function endSession()
     {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         session_unset();
+        session_destroy();
     }
 
     public static function getSession(): QuizSessionModel

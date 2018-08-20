@@ -228,7 +228,7 @@ class QuizService
         $result = $this->getResult($userId, $quizId);
 
         //Prevent division by 0
-        if ($result->totalAnswers === 0) {
+        if ($result->totalAnswers == 0) {
             return 0;
         }
 

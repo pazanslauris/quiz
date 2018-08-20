@@ -30,5 +30,6 @@ class IndexController extends BaseController
         $session = QuizSessionService::getSession();
         $session->userId = $user->id;
         header('Location: \\');
+        die();
     }
 }
