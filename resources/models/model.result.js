@@ -18,4 +18,8 @@ export default class Result {
 
         return result;
     }
+
+    isValid() {
+        return (this.totalAnswers > 0);
+    }
 }

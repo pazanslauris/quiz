@@ -45,7 +45,7 @@ abstract class BaseController
      */
     protected function resolveViewFile(string $view): string
     {
-        return VIEW_DIR . "/$view.php";
+        return VIEW_DIR . "/$view.phtml";
     }
 
     /**

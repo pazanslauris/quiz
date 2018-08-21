@@ -105,6 +105,7 @@ export default new Vuex.Store({
                 if (response.type === Response.STATUS) {
                     if (response.data === true) {
                         context.commit(types.SET_USER, new User());
+                        context.commit(types.SET_CURRENT_RESULT, new Result());
                     }
                 }
             });

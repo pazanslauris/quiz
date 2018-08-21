@@ -22,6 +22,7 @@ $controllerName = $controllerNamespace . ($controllerName ? $controllerName : 'I
 $actionName = array_shift($urlParams);
 $actionName = ($actionName ? $actionName : 'Index') . 'Action';
 
+//JSON POST DATA
 $content = explode(';', $_SERVER["CONTENT_TYPE"]);
 $contentType = array_shift($content);
 if ($contentType == "application/json") {
@@ -30,7 +31,8 @@ if ($contentType == "application/json") {
 
 //TODO: Dependency injection
 /** @var BaseController $controller */
-$controller = new $controllerName(new QuizService(new QuizDBRepository(),
+$controller = new $controllerName(new QuizService
+    (new QuizDBRepository(),
     new QuestionDBRepository(),
     new AnswerDBRepository(),
     new UserDBRepository(),

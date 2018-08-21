@@ -9,14 +9,7 @@ class IndexController extends BaseController
 {
     public function IndexAction()
     {
-        $session = QuizSessionService::getSession();
-        $user = $this->quizService->getUser($session->userId);
-        if ($user->isValid()) {
-            return $this->render('index', compact('user'));
-        } else {
-            //User is not logged in
-            return $this->render('login');
-        }
+        return $this->render('index');
     }
 
     public function initUserAction() {
