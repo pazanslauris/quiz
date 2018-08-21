@@ -31,7 +31,6 @@ export default class Question {
 
     static fromArray(rawData) {
         let question = new Question();
-        console.log(rawData);
         question.id = rawData.question.id;
         question.question = rawData.question.question;
         question.quizId = rawData.question.quizId;

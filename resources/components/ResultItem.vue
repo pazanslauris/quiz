@@ -1,5 +1,7 @@
 <template>
-    <span>Total answers: {{ result.totalAnswers }}, Correct answers: {{ result.correctAnswers }}</span>
+    <div v-if="result.isValid()">
+        Total answers: {{ result.totalAnswers }}, Correct answers: {{ result.correctAnswers }}
+    </div>
 </template>
 
 <script>

@@ -39,10 +39,13 @@ class QuizAjaxController extends BaseAjaxController
         }
         $quizId = $this->post['quizId'];
         if ($session->userId == 0) {
-            if (!isset($this->post['name'])) {
-                return new ResponseModel(ResponseModel::ERRORMSG, "no name");
-            }
-            $session->userId = $this->quizService->registerUser($this->post['name'])->id;
+            return new ResponseModel(ResponseModel::ERRORMSG, "not logged in");
+
+            //register & start quiz
+//            if (!isset($this->post['name'])) {
+//                return new ResponseModel(ResponseModel::ERRORMSG, "no name");
+//            }
+//            $session->userId = $this->quizService->registerUser($this->post['name'])->id;
         }
 
 

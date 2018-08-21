@@ -15,7 +15,7 @@ export default new Vuex.Store({
     state: {
         activeQuizId: null,
         allQuizzes: [],
-        name: '',
+        //name: '',
         currentQuestion: new Question(),
         currentResult: new Result(),
         user: new User(),
@@ -26,9 +26,6 @@ export default new Vuex.Store({
         },
         [types.SET_ALL_QUIZZES](state, quizzes) {
             state.allQuizzes = quizzes;
-        },
-        [types.SET_NAME](state, name) {
-            state.name = name;
         },
         [types.SET_CURRENT_QUESTION](state, question) {
             state.currentQuestion = question;
@@ -51,9 +48,6 @@ export default new Vuex.Store({
                     context.commit(types.SET_ALL_QUIZZES, response.data);
                 }
             });
-        },
-        setName(context, newName) {
-            context.commit(types.SET_NAME, newName);
         },
 
         start(context) {

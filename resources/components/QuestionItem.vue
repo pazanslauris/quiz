@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="question.isValid()">
         <h1>{{ question.question }}</h1>
         <ul>
             <li v-for="answer in question.answers">
