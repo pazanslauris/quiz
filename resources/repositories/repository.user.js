@@ -1,14 +1,14 @@
 import Api from '../api.js';
 import Response from "../models/model.response";
 
-class QuizRepository {
+class UserRepository {
     constructor() {
-        this.quizApi = new Api('QuizAjax');
+        this.quizApi = new Api('UserAjax');
     }
 
-    getAllQuizzes() {
+    newUser(name) {
         return new Promise(resolve => {
-            this.quizApi.get('getQuizzes')
+            this.quizApi.post('register', {name})
                 .then(response => {
                     let responseModel = Response.fromArray(response.data);
                     resolve(responseModel);
@@ -16,19 +16,9 @@ class QuizRepository {
         })
     }
 
-    startQuiz(name, quizId) {
+    getUser() {
         return new Promise(resolve => {
-            this.quizApi.post('startQuiz', {name, quizId})
-                .then(response => {
-                    let responseModel = Response.fromArray(response.data);
-                    resolve(responseModel);
-                })
-        })
-    }
-
-    submitAnswer(answerId) {
-        return new Promise(resolve => {
-            this.quizApi.post('submitAndLoadNextQuestion', {answerId})
+            this.quizApi.post('getUser')
                 .then(response => {
                     let responseModel = Response.fromArray(response.data);
                     resolve(responseModel);
@@ -47,4 +37,5 @@ class QuizRepository {
     }
 }
 
-export default new QuizRepository();
+
+export default new UserRepository();

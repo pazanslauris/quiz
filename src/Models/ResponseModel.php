@@ -5,6 +5,13 @@ namespace Quiz\Models;
 
 class ResponseModel extends BaseModel
 {
+    const USER = 'user';
+    const QUIZZES = 'quizzes';
+    const QUESTION = 'question';
+    const RESULT = 'result';
+    const STATUS = 'status';
+    const ERRORMSG = 'errorMsg';
+
     /** @var int */
     public $type;
 

@@ -17,10 +17,10 @@ class QuizAjaxController extends BaseAjaxController
     public function getQuizzesAction()
     {
         //$session = QuizSessionService::getSession();
-
         //$quizzes = $this->quizService->getAvailableQuizzes($session->userId);
+
         $quizzes = $this->quizService->getAllQuizzes();
-        $response = new ResponseModel('quizzes', $quizzes);
+        $response = new ResponseModel(ResponseModel::QUIZZES, $quizzes);
         return $response;
     }
 
@@ -35,12 +35,12 @@ class QuizAjaxController extends BaseAjaxController
 
         //TODO: validator
         if (!isset($this->post['quizId'])) {
-            return new ResponseModel('errorMsg', "no quiz id");
+            return new ResponseModel(ResponseModel::ERRORMSG, "no quiz id");
         }
         $quizId = $this->post['quizId'];
         if ($session->userId == 0) {
             if (!isset($this->post['name'])) {
-                return new ResponseModel('errorMsg', "no name");
+                return new ResponseModel(ResponseModel::ERRORMSG, "no name");
             }
             $session->userId = $this->quizService->registerUser($this->post['name'])->id;
         }
@@ -48,7 +48,7 @@ class QuizAjaxController extends BaseAjaxController
 
         //Check if quiz is already completed
         if ($this->quizService->isQuizCompleted($session->userId, $quizId)) {
-            //return new ResponseModel( 'errorMsg', "Quiz is already completed");
+            //return new ResponseModel( ResponseModel::ERRORMSG, "Quiz is already completed");
             return $this->getResultAction();
         }
 
@@ -89,7 +89,7 @@ class QuizAjaxController extends BaseAjaxController
 
         if ($session->question->isValid()) {
             $answers = $this->quizService->getAnswers($session->question->id);
-            $response = new ResponseModel('question', [
+            $response = new ResponseModel(ResponseModel::QUESTION, [
                 'question' => $session->question,
                 'answers' => $answers
             ]);
@@ -109,7 +109,7 @@ class QuizAjaxController extends BaseAjaxController
     public function submitAnswerAction()
     {
         if (!isset($this->post['answerId'])) {
-            return new ResponseModel('errorMsg', "answerId wasn't set");
+            return new ResponseModel(ResponseModel::ERRORMSG, "answerId wasn't set");
         }
         $session = QuizSessionService::getSession();
         $answerId = $this->post['answerId'];
@@ -117,9 +117,9 @@ class QuizAjaxController extends BaseAjaxController
         if ($session->question->isValid()) {
             $userAnswer = $this->submitUserAnswer($answerId);
             $status = $userAnswer->isValid();
-            return new ResponseModel('status', $status);
+            return new ResponseModel(ResponseModel::STATUS, $status);
         }
-        return new ResponseModel('errorMsg', "current question is invalid");
+        return new ResponseModel(ResponseModel::ERRORMSG, "current question is invalid");
     }
 
     /**
@@ -153,7 +153,7 @@ class QuizAjaxController extends BaseAjaxController
 
         $result = $this->quizService->getResult($session->userId, $quizId);
 
-        $response = new ResponseModel('result', $result);
+        $response = new ResponseModel(ResponseModel::RESULT, $result);
         return $response;
     }
 
@@ -165,6 +165,6 @@ class QuizAjaxController extends BaseAjaxController
     public function logoutAction()
     {
         QuizSessionService::endSession();
-        return new ResponseModel('status', true);
+        return new ResponseModel(ResponseModel::STATUS, true);
     }
 }

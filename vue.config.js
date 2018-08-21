@@ -5,6 +5,11 @@ module.exports = {
                 target: 'http://quiz.test/',
                 ws: true,
                 changeOrigin: true
+            },
+            'UserAjax': {
+                target: 'http://quiz.test/',
+                ws: true,
+                changeOrigin: true
             }
         }
     },
