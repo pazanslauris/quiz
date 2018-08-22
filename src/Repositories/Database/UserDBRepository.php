@@ -18,8 +18,8 @@ class UserDBRepository extends BaseDBRepository implements UserRepositoryInterfa
             $this->updateColumn(['id' => $user->id, 'name' => $user->name]);
             return $user;
         }
-        //Create a new user
 
+        //Create a new user
         $id = $this->insertRow(['name' => $user->name]);
         $user->id = $id;
         return $user;

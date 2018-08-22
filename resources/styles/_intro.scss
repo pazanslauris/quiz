@@ -1,0 +1,22 @@
+.intro {
+  @extend %quiz-block;
+
+  width: 100%;
+  height: 100%;
+  @include respond-to(medium) {
+    width: 500px;
+    height: auto;
+  }
+
+  &__header {
+    @extend %header;
+  }
+
+  &__input {
+    margin: 30px auto;
+  }
+
+  &__btn {
+    @extend %btn;
+  }
+}

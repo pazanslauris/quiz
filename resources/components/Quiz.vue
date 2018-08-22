@@ -1,21 +1,23 @@
 <template>
-    <div>
-        <div>
+    <div class="stretch">
             <!--Login-->
-            <LoginComponent/>
+            <!--<LoginComponent/>-->
+            <!--Select quiz-->
+            <!--<QuizStartItem/>-->
 
-            <div v-if="user.isValid()">
-                <!--Select quiz-->
-                <QuizStartItem/>
+            <div class="stretch" v-if="!user.isValid()">
+                <Intro />
+            </div>
 
+            <div class="stretch" v-if="user.isValid() && currentQuestion.isValid()">
                 <!--Question-->
                 <QuestionItem/>
-
+            </div>
+        
+            <div class="stretch" v-if="result.isValid()">
                 <!--Result-->
                 <ResultItem/>
             </div>
-
-        </div>
     </div>
 </template>
 
@@ -23,15 +25,25 @@
     import QuestionItem from "./QuestionItem";
     import ResultItem from "./ResultItem";
     import QuizStartItem from "./QuizStartItem";
-    import LoginComponent from "./LoginComponent";
+    import Intro from "./Intro";
 
     export default {
         name: 'Quiz',
-        components: {LoginComponent, QuizStartItem, ResultItem, QuestionItem},
+        components: {Intro, QuizStartItem, ResultItem, QuestionItem},
         computed: {
             user: {
                 get() {
                     return this.$store.state.user;
+                }
+            },
+            currentQuestion: {
+                get() {
+                    return this.$store.state.currentQuestion;
+                }
+            },
+            result: {
+                get() {
+                    return this.$store.state.currentResult;
                 }
             }
         },

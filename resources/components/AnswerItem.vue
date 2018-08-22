@@ -1,5 +1,8 @@
 <template>
-    <a href="#" @click="onAnswerClicked">{{ answer.answer }}</a>
+    <div class="answers__label-wrapper">
+        <a :class="{ answers__label: true , 'answers__label--active': isActive }"
+           @click="onAnswerClicked">{{ answer.answer }}</a>
+    </div>
 </template>
 
 <script>
@@ -15,6 +18,9 @@
             onAnswered: {
                 type: Function,
                 required: true
+            },
+            isActive: {
+                type: Boolean,
             }
         },
         methods: {

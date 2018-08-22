@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/16/2018
- * Time: 3:51 PM
- */
 
 namespace Quiz\Database;
 
@@ -114,7 +108,7 @@ class MysqlConnection implements ConnectionInterface
         $id = $this->connection->lastInsertId();
         return $id;
     }
-
+    
     /**
      * The primary key must be passed in the attributes...
      *

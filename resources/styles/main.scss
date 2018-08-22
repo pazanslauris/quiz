@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+}
+
+@import 'mixins';
+@import 'colors';
+@import 'base_elems';
+@import 'input';
+@import 'intro';
+@import 'question_viewer';
+@import 'results';
+
+html, body {
+  background-color: $bgColor;
+  height: 100%;
+  overflow: auto;
+}
+
+.stretch {
+  height: 100%;
+  @include respond-to(medium) {
+    height: auto;
+  }
+}

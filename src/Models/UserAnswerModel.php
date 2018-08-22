@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/14/2018
- * Time: 10:15 AM
- */
 
 namespace Quiz\Models;
 
@@ -47,7 +41,7 @@ class UserAnswerModel extends BaseModel
     /**
      * @return bool
      */
-    public function isSubmitted():bool
+    public function isSubmitted(): bool
     {
         return ($this->id !== 0);
     }

@@ -15,7 +15,7 @@ export default new Vuex.Store({
     state: {
         activeQuizId: null,
         allQuizzes: [],
-        //name: '',
+        name: '',
         currentQuestion: new Question(),
         currentResult: new Result(),
         user: new User(),
@@ -35,6 +35,9 @@ export default new Vuex.Store({
         },
         [types.SET_USER](state, user) {
             state.user = user;
+        },
+        [types.SET_NAME](state, name) {
+            state.name = name;
         }
     },
     actions: {
@@ -57,7 +60,7 @@ export default new Vuex.Store({
                     //we got the first question...
                     context.commit(types.SET_CURRENT_QUESTION, response.data);
                     context.commit(types.SET_CURRENT_RESULT, new Result());
-                    //this.setUser(context);
+                    context.dispatch('setUser'); //TODO: just create a login page to set the user beforehand
                 } else if (response.type === Response.RESULT) {
                     context.commit(types.SET_CURRENT_QUESTION, new Question());
                     context.commit(types.SET_CURRENT_RESULT, response.data);
@@ -99,6 +102,7 @@ export default new Vuex.Store({
                 if (response.type === Response.STATUS) {
                     if (response.data === true) {
                         context.commit(types.SET_USER, new User());
+                        context.commit(types.SET_CURRENT_QUESTION, new Question());
                         context.commit(types.SET_CURRENT_RESULT, new Result());
                     }
                 }
@@ -115,6 +119,9 @@ export default new Vuex.Store({
                     alert('unexpected response');
                 }
             })
+        },
+        setName(context, newName) {
+            context.commit(types.SET_NAME, newName);
         }
     }
 });

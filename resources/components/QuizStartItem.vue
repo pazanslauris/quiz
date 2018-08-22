@@ -1,19 +1,17 @@
 <template>
     <div>
-        <p>Select quiz:</p>
-        <select v-model="activeQuizId">
-            <option v-for="quiz in allQuizzes" :value="quiz.id"> {{ quiz.name }}</option>
-        </select>
+        <SelectDropdown label="Select Quiz: " v-model="activeQuizId" :options="getQuizzes()"/>
         <button @click="onStart()">Start</button>
     </div>
 </template>
 
 <script>
     import {mapActions} from 'vuex';
+    import SelectDropdown from "./forms/select.dropdown";
 
     export default {
         name: 'QuizStartItem',
-
+        components: {SelectDropdown},
         computed: {
             activeQuizId: {
                 get() {
@@ -43,6 +41,9 @@
                 }
 
                 this.start();
+            },
+            getQuizzes() {
+                return [].concat([{ id: '', name: '---'}], this.allQuizzes.map(quiz => quiz.toArray()));
             }
         }),
 

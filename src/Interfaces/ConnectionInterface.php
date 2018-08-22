@@ -1,16 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/16/2018
- * Time: 3:23 PM
- */
 
 namespace Quiz\Interfaces;
 
 
 interface ConnectionInterface
 {
+    //TODO: split up to selectOne
     public function select(string $table, array $conditions = [], array $select = [], bool $selectOne = false): array;
 
     public function insert(string $table, string $primaryKey, array $attributes): int;

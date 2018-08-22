@@ -1,0 +1,25 @@
+.result {
+  @extend %quiz-block;
+
+  width: 100%;
+  height: 100%;
+  @include respond-to(medium) {
+    width: 500px;
+    height: auto;
+  }
+
+  &__header {
+    @extend %header;
+  }
+
+  &__text {
+    font-size: 20px;
+    text-align: center;
+    margin: 20px auto;
+  }
+
+  &__btn {
+    @extend %btn;
+    width: 30%;
+  }
+}

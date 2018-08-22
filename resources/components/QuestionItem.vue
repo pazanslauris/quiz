@@ -1,12 +1,12 @@
 <template>
-    <div v-if="question.isValid()">
-        <h1>{{ question.question }}</h1>
-        <ul>
-            <li v-for="answer in question.answers">
-                <AnswerItem :answer="answer" :on-answered="onAnswerPicked"></AnswerItem>
+    <div class="viewer" v-if="question.isValid()">
+        <h1 class="viewer__question">{{ question.question }}</h1>
+        <ul class="answers">
+            <li class="answers__item" v-for="answer in question.answers">
+                <AnswerItem :is-active="(answer.id === answerId)" :answer="answer" :on-answered="onAnswerPicked"></AnswerItem>
             </li>
         </ul>
-        <button @click="onAnswered">Next question</button>
+        <button class="viewer__btn" @click="onAnswered">Next question</button>
     </div>
 </template>
 
