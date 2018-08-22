@@ -31,25 +31,16 @@ class QuizAjaxController extends BaseAjaxController
      */
     public function startQuizAction()
     {
-        $session = QuizSessionService::getSession();
-
-        //TODO: validator
         if (!isset($this->post['quizId'])) {
             return new ResponseModel(ResponseModel::ERRORMSG, "no quiz id");
         }
-        $quizId = $this->post['quizId'];
-        if ($session->userId == 0) {
-            //return new ResponseModel(ResponseModel::ERRORMSG, "not logged in");
 
-            //register & start quiz
-            if (!isset($this->post['name'])) {
-                return new ResponseModel(ResponseModel::ERRORMSG, "no name");
-            }
-            $session->userId = $this->quizService->registerUser($this->post['name'])->id;
+        $session = QuizSessionService::getSession();
+        if ($session->userId == 0) {
+            return new ResponseModel(ResponseModel::ERRORMSG, "not logged in");
         }
 
-
-        //Check if quiz is already completed
+        $quizId = $this->post['quizId'];
         if ($this->quizService->isQuizCompleted($session->userId, $quizId)) {
             //return new ResponseModel( ResponseModel::ERRORMSG, "Quiz is already completed");
             return $this->getResultAction();

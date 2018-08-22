@@ -6,10 +6,14 @@
   font-size: 20px;
 }
 
+$userBarHeight: 30px;
+
 @import 'mixins';
 @import 'colors';
 @import 'base_elems';
 @import 'input';
+@import 'user_bar';
+@import 'login';
 @import 'intro';
 @import 'question_viewer';
 @import 'results';
@@ -20,9 +24,6 @@ html, body {
   overflow: auto;
 }
 
-.stretch {
-  height: 100%;
-  @include respond-to(medium) {
-    height: auto;
-  }
+body {
+  padding-top: $userBarHeight;
 }

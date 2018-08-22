@@ -1,9 +1,9 @@
 <template>
     <div class="result" v-if="result.isValid()">
-        <h1 class="result__header" >Paldies, {{ name }}</h1>
+        <h1 class="result__header" >Paldies, {{ user.name }}</h1>
         <p class="result__text">Tu pareizi atbildēji uz {{ result.correctAnswers}} no {{ result.totalAnswers }} jautājumiem.</p>
 
-        <button class="result__btn" @click="logout()">Logout</button>
+        <button class="result__btn" @click="reset()">Do another quiz</button>
     </div>
 </template>
 
@@ -18,14 +18,14 @@
                     return this.$store.state.currentResult;
                 }
             },
-            name: {
+            user: {
                 get() {
-                    return this.$store.state.name;
+                    return this.$store.state.user;
                 }
             }
         },
         methods: mapActions([
-            'logout',
+            'reset',
         ]),
     }
 </script>

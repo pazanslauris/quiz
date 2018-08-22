@@ -1,4 +1,4 @@
-.result {
+.login {
   @extend %quiz-block;
 
   width: 100%;
@@ -12,10 +12,8 @@
     @extend %header;
   }
 
-  &__text {
-    font-size: 20px;
-    text-align: center;
-    margin: 20px auto;
+  &__input {
+    margin: 30px auto;
   }
 
   &__btn {

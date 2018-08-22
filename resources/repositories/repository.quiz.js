@@ -16,9 +16,9 @@ class QuizRepository {
         })
     }
 
-    startQuiz(name, quizId) {
+    startQuiz(quizId) {
         return new Promise(resolve => {
-            this.quizApi.post('startQuiz', {name, quizId})
+            this.quizApi.post('startQuiz', {quizId})
                 .then(response => {
                     let responseModel = Response.fromArray(response.data);
                     resolve(responseModel);

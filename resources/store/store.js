@@ -15,7 +15,6 @@ export default new Vuex.Store({
     state: {
         activeQuizId: null,
         allQuizzes: [],
-        name: '',
         currentQuestion: new Question(),
         currentResult: new Result(),
         user: new User(),
@@ -35,9 +34,6 @@ export default new Vuex.Store({
         },
         [types.SET_USER](state, user) {
             state.user = user;
-        },
-        [types.SET_NAME](state, name) {
-            state.name = name;
         }
     },
     actions: {
@@ -54,7 +50,7 @@ export default new Vuex.Store({
         },
 
         start(context) {
-            let quizStartPromise = QuizRepository.startQuiz(this.state.name, this.state.activeQuizId);
+            let quizStartPromise = QuizRepository.startQuiz(this.state.activeQuizId);
             quizStartPromise.then(response => {
                 if (response.type === Response.QUESTION) {
                     //we got the first question...
@@ -96,6 +92,10 @@ export default new Vuex.Store({
                 }
             })
         },
+        reset(context) {
+            context.commit(types.SET_CURRENT_QUESTION, new Question());
+            context.commit(types.SET_CURRENT_RESULT, new Result());
+        },
         logout(context) {
             let logoutPromise = UserRepository.logout();
             logoutPromise.then(response => {
@@ -119,9 +119,6 @@ export default new Vuex.Store({
                     alert('unexpected response');
                 }
             })
-        },
-        setName(context, newName) {
-            context.commit(types.SET_NAME, newName);
         }
     }
 });

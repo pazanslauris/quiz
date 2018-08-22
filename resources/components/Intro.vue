@@ -1,7 +1,7 @@
 <template>
     <div class="intro">
         <h1 class="intro__header">Pick a quiz</h1>
-        <TextInput class="intro__input" v-model="name" label="Your name" placeholder="Name"/>
+        <!--<TextInput class="intro__input" v-model="name" label="Your name" placeholder="Name"/>-->
         <SelectDropdown class="intro__input" v-model="activeQuizId" label="Pick your quiz" :options="getQuizzes()" />
         <button class="intro__btn" @click="onStart">Start</button>
     </div>
@@ -47,10 +47,10 @@
             'setUser',
         ]), {
             onStart() {
-                if (!this.name) {
-                    alert('Give me your name');
-                    return;
-                }
+                // if (!this.name) {
+                //     alert('Give me your name');
+                //     return;
+                // }
                 if (!this.activeQuizId) {
                     alert('Pick a quiz!');
                     return;

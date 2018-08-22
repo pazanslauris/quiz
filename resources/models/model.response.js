@@ -44,7 +44,7 @@ export default class Response {
     }
 
     static fromArray(rawData) {
-        console.log(rawData);
+        // console.log(rawData);
         let response = new Response();
         response.type = rawData.type;
         response.data = this.getObjectFromData(response.type, rawData);

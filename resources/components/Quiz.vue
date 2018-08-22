@@ -1,35 +1,35 @@
 <template>
-    <div class="stretch">
-            <!--Login-->
-            <!--<LoginComponent/>-->
-            <!--Select quiz-->
-            <!--<QuizStartItem/>-->
+    <span>
+        <UserBar/>
 
-            <div class="stretch" v-if="!user.isValid()">
-                <Intro />
-            </div>
+        <span v-if="!user.isValid()">
+            <Login />
+        </span>
 
-            <div class="stretch" v-if="user.isValid() && currentQuestion.isValid()">
-                <!--Question-->
-                <QuestionItem/>
-            </div>
-        
-            <div class="stretch" v-if="result.isValid()">
-                <!--Result-->
-                <ResultItem/>
-            </div>
-    </div>
+        <span v-else-if="user.isValid() && !currentQuestion.isValid() && !result.isValid()">
+            <Intro />
+        </span>
+
+        <span v-if="user.isValid() && currentQuestion.isValid()">
+            <QuestionItem/>
+        </span>
+
+        <span v-if="result.isValid()">
+            <ResultItem/>
+        </span>
+    </span>
 </template>
 
 <script>
     import QuestionItem from "./QuestionItem";
     import ResultItem from "./ResultItem";
-    import QuizStartItem from "./QuizStartItem";
     import Intro from "./Intro";
+    import UserBar from "./UserBar";
+    import Login from "./Login";
 
     export default {
         name: 'Quiz',
-        components: {Intro, QuizStartItem, ResultItem, QuestionItem},
+        components: {Login, UserBar, Intro, ResultItem, QuestionItem},
         computed: {
             user: {
                 get() {

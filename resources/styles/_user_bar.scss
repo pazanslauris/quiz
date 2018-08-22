@@ -1,0 +1,32 @@
+.userBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: $panelColor;
+  width: 100%;
+  height: $userBarHeight;
+  border-bottom: 1px solid black;
+
+  &__info {
+    float: right;
+    height: 100%;
+  }
+
+  &__text {
+    margin: 0 10px;
+    font-size: 16px;
+  }
+
+  &__btn {
+    border-left: black 1px solid;
+    padding: 0 5px;
+    line-height: $userBarHeight;
+    font-size: 14px;
+    text-decoration: underline;
+    font-style: italic;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
