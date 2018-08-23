@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Lauris
- * Date: 8/16/2018
- * Time: 3:30 PM
- */
 
 namespace Quiz\Repositories;
 
@@ -71,5 +65,29 @@ class QuestionRepository implements QuestionRepositoryInterface
             }
         }
         return new QuestionModel();
+    }
+
+    public function updateQuestion(QuestionModel $newQuestion): QuestionModel
+    {
+        foreach ($this->questions as $question) {
+            if ($question->id == $newQuestion->id) {
+                $question->question = $newQuestion->question;
+                $question->questionNo = $newQuestion->questionNo;
+                return $newQuestion;
+            }
+        }
+        return new QuestionModel();
+    }
+
+    public function deleteQuestion(QuestionModel $oldQuestion): bool
+    {
+        foreach($this->questions as $key => $question) {
+            if($question->id == $oldQuestion->id &&
+                $question->quizId == $oldQuestion->quizId){
+                unset($this->questions[$key]);
+                return true;
+            }
+        }
+        return false;
     }
 }

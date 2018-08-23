@@ -13,4 +13,6 @@ interface ConnectionInterface
     public function update(string $table, string $primaryKey, array $attributes): bool;
 
     public function fetchColumns(string $table): array;
+
+    public function delete(string $table, string $primaryKey, array $attributes): bool;
 }

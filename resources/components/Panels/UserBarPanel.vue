@@ -1,5 +1,6 @@
 <template>
     <div class="userBar">
+        <span v-if="user.isAdmin" class="userBar__text">Admin mode</span>
         <div class="userBar__info" v-if="user.isValid()">
             <span class="userBar__text">{{ user.name }}</span>
             <!--<span class="userBar__text">Id: {{ user.id }}</span>-->
@@ -11,7 +12,7 @@
 <script>
     import {mapActions} from 'vuex';
     export default {
-        name: 'UserBar',
+        name: 'UserBarPanel',
         computed: {
             user: {
                 get() {

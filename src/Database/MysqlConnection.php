@@ -35,7 +35,7 @@ class MysqlConnection implements ConnectionInterface
      * @param array $conditions
      * @return string
      */
-    public function selectConditionBuilder(array $conditions): string
+    public function whereConditionBuilder(array $conditions): string
     {
         $conditionSql = "";
         if ($conditions) {
@@ -71,7 +71,7 @@ class MysqlConnection implements ConnectionInterface
     public function select(string $table, array $conditions = [], array $select = [], bool $selectOne = false): array
     {
         $sqlSelect = $this->selectBuilder($select);
-        $sqlCondition = $this->selectConditionBuilder($conditions);
+        $sqlCondition = $this->whereConditionBuilder($conditions);
 
         $sql = "SELECT " . $sqlSelect . " FROM " . $table . $sqlCondition;
 
@@ -122,14 +122,39 @@ class MysqlConnection implements ConnectionInterface
         $sqlCondition = "WHERE " . $primaryKey . " = " . $attributes[$primaryKey];
         unset($attributes[$primaryKey]);
 
-        $sqlAttributes = "";
+        $sqlAttributes = [];
         foreach ($attributes as $attribute => $value) {
-            $sqlAttributes = $sqlAttributes . "`" . $attribute . "`=? ";
+            $sqlAttributes[] = "`" . $attribute . "`=? ";
         }
-        $sql = "UPDATE " . $table . " SET " . $sqlAttributes . $sqlCondition;
-
+        $sql = "UPDATE " . $table . " SET " . implode(", ", $sqlAttributes) . $sqlCondition;
         $statement = $this->connection->prepare($sql);
-        return $statement->execute(array_values($attributes));
+        if (!$statement->execute(array_values($attributes))) {
+            return false;
+        }
+        return ($statement->rowCount() > 0);
+    }
+
+    /**
+     * Delete a row
+     *
+     * @param string $table
+     * @param string $primaryKey
+     * @param array $attributes
+     * @return bool
+     */
+    public function delete(string $table, string $primaryKey, array $attributes): bool
+    {
+        //Don't allow a wildcard
+        if (sizeof($attributes) == 0) {
+            return false;
+        }
+
+        $sql = "DELETE FROM " . $table . $this->whereConditionBuilder($attributes);
+        $statement = $this->connection->prepare($sql);
+        if (!$statement->execute(array_values($attributes))) {
+            return false;
+        }
+        return ($statement->rowCount() > 0);
     }
 
     /**

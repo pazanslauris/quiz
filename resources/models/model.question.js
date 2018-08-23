@@ -6,7 +6,7 @@ export default class Question {
         /**
          * @type {?number}
          */
-        this.id = null;
+        this.id = 0;
 
         /**
          * @type {?string}
@@ -42,6 +42,6 @@ export default class Question {
     }
 
     isValid() {
-        return (this.id != null && this.quizId != null && this.questionNo != null);
+        return (this.id !== 0 && this.quizId != null && this.questionNo != null);
     }
 }

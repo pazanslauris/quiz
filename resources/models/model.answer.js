@@ -4,7 +4,7 @@ export default class Answer {
         /**
          * @type {?number}
          */
-        this.id = null;
+        this.id = 0;
 
         /**
          * @type {?string}
@@ -15,6 +15,12 @@ export default class Answer {
          * @type {?number}
          */
         this.questionId = 0;
+
+        /**
+         * used only for the admin panel...
+         * @type {boolean}
+         */
+        this.isCorrect = false;
     }
 
     static fromArray(rawData) {
@@ -22,6 +28,7 @@ export default class Answer {
         answer.id = rawData.id;
         answer.answer = rawData.answer;
         answer.questionId = rawData.questionId;
+        answer.isCorrect = parseInt(rawData.isCorrect);
         return answer;
     }
 }

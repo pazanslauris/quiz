@@ -17,15 +17,20 @@ class UserModel extends BaseModel
     /** @var string */
     public $name;
 
+    /** @var boolean */
+    public $isAdmin;
+
     /**
      * UserModel constructor.
      * @param int $id
      * @param string $name
+     * @param bool $isAdmin
      */
-    public function __construct(int $id = 0, string $name = '')
+    public function __construct(int $id = 0, string $name = '', bool $isAdmin = false)
     {
         $this->id = $id;
         $this->name = $name;
+        $this->isAdmin = $isAdmin;
     }
 
     /**

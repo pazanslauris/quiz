@@ -11,4 +11,6 @@ class QuizSessionModel extends BaseModel
     public $quizId = 0;
     /** @var QuestionModel  */
     public $question;
+    /** @var bool */
+    public $isAdmin = false;
 }

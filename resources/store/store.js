@@ -8,20 +8,22 @@ import Question from "../models/model.question";
 import Result from "../models/model.result";
 import * as Response from "../models/model.response";
 import User from "../models/model.user";
+import Quiz from "../models/model.quiz";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        activeQuizId: null,
+        currentQuiz: new Quiz(),
         allQuizzes: [],
         currentQuestion: new Question(),
         currentResult: new Result(),
         user: new User(),
+        currentErrorMsg: '',
     },
     mutations: {
-        [types.SET_ACTIVE_QUIZ](state, quizId) {
-            state.activeQuizId = quizId;
+        [types.SET_CURRENT_QUIZ](state, quiz) {
+            state.currentQuiz = quiz;
         },
         [types.SET_ALL_QUIZZES](state, quizzes) {
             state.allQuizzes = quizzes;
@@ -34,12 +36,21 @@ export default new Vuex.Store({
         },
         [types.SET_USER](state, user) {
             state.user = user;
+        },
+        [types.SET_ERROR_MSG](state, msg) {
+            state.currentErrorMsg = msg;
         }
     },
     actions: {
-        setActiveQuizId(context, quizId) {
-            context.commit(types.SET_ACTIVE_QUIZ, quizId);
+        setCurrentQuiz(context, quizId) {
+            for (let i in context.state.allQuizzes) {
+                let quiz = context.state.allQuizzes[i];
+                if (quiz.id === quizId) {
+                    context.commit(types.SET_CURRENT_QUIZ, quiz);
+                }
+            }
         },
+
         setAllQuizzes(context) {
             let quizPromise = QuizRepository.getAllQuizzes();
             quizPromise.then(response => {
@@ -49,20 +60,24 @@ export default new Vuex.Store({
             });
         },
 
-        start(context) {
-            let quizStartPromise = QuizRepository.startQuiz(this.state.activeQuizId);
+        start(context, quizId) {
+            context.dispatch('setCurrentQuiz', quizId);
+            let quizStartPromise = QuizRepository.startQuiz(quizId);
             quizStartPromise.then(response => {
                 if (response.type === Response.QUESTION) {
-                    //we got the first question...
                     context.commit(types.SET_CURRENT_QUESTION, response.data);
                     context.commit(types.SET_CURRENT_RESULT, new Result());
-                    context.dispatch('setUser'); //TODO: just create a login page to set the user beforehand
+
                 } else if (response.type === Response.RESULT) {
                     context.commit(types.SET_CURRENT_QUESTION, new Question());
                     context.commit(types.SET_CURRENT_RESULT, response.data);
+
+                } else if (response.type === Response.ERRORMSG) {
+                    context.commit(types.SET_ERROR_MSG, response.data);
+                    context.commit(types.SET_CURRENT_QUIZ, new Quiz());
+
                 } else {
-                    //failed to start quiz
-                    alert('failed to start quiz...');
+                    alert("Unexpected response received");
                 }
             })
         },
@@ -71,24 +86,49 @@ export default new Vuex.Store({
             let answerPromise = QuizRepository.submitAnswer(answerId);
             answerPromise.then(response => {
                 if (response.type === Response.QUESTION) {
-                    //we have the next question...
                     context.commit(types.SET_CURRENT_QUESTION, response.data);
-                    context.commit(types.SET_CURRENT_RESULT, new Result());
+
                 } else if (response.type === Response.RESULT) {
                     context.commit(types.SET_CURRENT_QUESTION, new Question());
                     context.commit(types.SET_CURRENT_RESULT, response.data);
+
+                } else if (response.type === Response.ERRORMSG) {
+                    context.commit(types.SET_ERROR_MSG, response.data);
+
                 } else {
-                    alert('an error occurred...');
+                    alert("Unexpected response received");
                 }
             })
         },
         register(context, name) {
+            if (name.length < 3) {
+                alert('Name can\'t be shorter than 3 letters');
+                return;
+            }
             let registerPromise = UserRepository.newUser(name);
             registerPromise.then(response => {
                 if (response.type === Response.USER) {
                     context.commit(types.SET_USER, response.data);
+
+                } else if (response.type === Response.ERRORMSG) {
+                    context.commit(types.SET_ERROR_MSG, response.data);
+
                 } else {
-                    context.commit(types.SET_USER, new User());
+                    alert("Unexpected response received");
+                }
+            })
+        },
+        loginAdmin(context, {name, password}) {
+            let loginPromise = UserRepository.login(name, password);
+            loginPromise.then(response => {
+                if (response.type === Response.USER) {
+                    context.commit(types.SET_USER, response.data);
+
+                } else if (response.type === Response.ERRORMSG) {
+                    context.commit(types.SET_ERROR_MSG, response.data);
+
+                } else {
+                    alert("Unexpected response received");
                 }
             })
         },
@@ -104,7 +144,12 @@ export default new Vuex.Store({
                         context.commit(types.SET_USER, new User());
                         context.commit(types.SET_CURRENT_QUESTION, new Question());
                         context.commit(types.SET_CURRENT_RESULT, new Result());
+                    } else {
+                        context.commit(types.SET_ERROR_MSG, "Failed to log out");
                     }
+                } else {
+
+                    alert("Unexpected response received");
                 }
             });
         },
@@ -119,6 +164,9 @@ export default new Vuex.Store({
                     alert('unexpected response');
                 }
             })
+        },
+        resetError(context) {
+            context.commit(types.SET_ERROR_MSG, '');
         }
     }
 });

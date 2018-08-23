@@ -6,8 +6,11 @@ namespace Quiz\Models;
 class ResponseModel extends BaseModel
 {
     const USER = 'user';
+    const QUIZ = 'quiz';
     const QUIZZES = 'quizzes';
     const QUESTION = 'question';
+    const QUESTIONS = 'questions';
+    const ANSWER = 'answer';
     const RESULT = 'result';
     const STATUS = 'status';
     const ERRORMSG = 'errorMsg';

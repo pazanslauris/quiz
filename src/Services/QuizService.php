@@ -235,6 +235,117 @@ class QuizService
         return round($result->correctAnswers / $result->totalAnswers * 100);
     }
 
+    /**
+     * Edit and save a given quiz
+     *
+     * @param QuizModel $quiz
+     * @return QuizModel
+     */
+    public function updateQuiz(QuizModel $quiz): QuizModel
+    {
+        return $this->quizzes->updateQuiz($quiz);
+    }
+
+    /**
+     * Edit and save a given question
+     *
+     * @param QuestionModel $question
+     * @return QuestionModel
+     */
+    public function updateQuestion(QuestionModel $question): QuestionModel
+    {
+        return $this->questions->updateQuestion($question);
+    }
+
+    /**
+     * Edit and save a given answer
+     *
+     * @param AnswerModel $answer
+     * @return AnswerModel
+     */
+    public function updateAnswer(AnswerModel $answer): AnswerModel
+    {
+        return $this->answers->updateAnswer($answer);
+    }
+
+    /**
+     * Add a quiz
+     *
+     * @param QuizModel $quiz
+     * @return QuizModel
+     */
+    public function addQuiz(QuizModel $quiz): QuizModel
+    {
+        return $this->quizzes->addQuiz($quiz);
+    }
+
+    /**
+     * Add a question
+     *
+     * @param QuestionModel $question
+     * @return QuestionModel
+     */
+    public function addQuestion(QuestionModel $question): QuestionModel
+    {
+        return $this->questions->addQuestion($question);
+    }
+
+    /**
+     * Add an answer
+     *
+     * @param AnswerModel $answer
+     * @return AnswerModel
+     */
+    public function addAnswer(AnswerModel $answer): AnswerModel
+    {
+        return $this->answers->addAnswer($answer);
+    }
+
+    /**
+     * Deletes a quiz by its id
+     *
+     * @param QuizModel $quiz
+     * @return bool
+     */
+    public function deleteQuiz(QuizModel $quiz): bool
+    {
+        $questions = $this->questions->getQuestions($quiz->id);
+        foreach($questions as $question) {
+            if (!$this->deleteQuestion($question)) {
+                return false;
+            }
+        }
+        return $this->quizzes->deleteQuiz($quiz);
+    }
+
+    /**
+     * Deletes a question by its id and quiz id
+     *
+     * @param QuestionModel $question
+     * @return bool
+     */
+    public function deleteQuestion(QuestionModel $question): bool
+    {
+        $answers = $this->answers->getAnswers($question->id);
+        foreach($answers as $answer) {
+            if (!$this->deleteAnswer($answer)) {
+                return false;
+            }
+        }
+        return $this->questions->deleteQuestion($question);
+    }
+
+
+    /**
+     * Deletes an answer by its id and question id
+     *
+     * @param AnswerModel $answer
+     * @return bool
+     */
+    public function deleteAnswer(AnswerModel $answer): bool
+    {
+        return $this->answers->deleteAnswer($answer);
+    }
 
     /**
      * Helper function for getResult

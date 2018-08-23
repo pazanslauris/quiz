@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import Response from "./models/model.response";
 
 Vue.use(VueAxios, axios);
 
@@ -39,5 +40,21 @@ export default class Api {
      */
     buildUrl(url) {
         return '/' + this.controllerName + '/' + url;
+    }
+
+    /**
+     * @param action
+     * @param params
+     * @returns {Promise<any>}
+     */
+    getResponseAsync(action, params = {}) {
+        return new Promise(resolve => {
+            this.post(action, params)
+                .then(response => {
+                    console.log(response);
+                    let responseModel = Response.fromArray(response.data);
+                    resolve(responseModel);
+                })
+        })
     }
 }

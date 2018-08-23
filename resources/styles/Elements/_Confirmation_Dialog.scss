@@ -1,0 +1,45 @@
+.confirmation {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: calc(50% - 100px);
+  @include respond-to(medium) {
+    width: 500px;
+    left: calc(50% - 250px);
+  }
+
+  padding-bottom: 15px;
+  background-color: black;
+  color: white;
+  text-align: center;
+
+  &__overlay {
+    position:fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  &__text {
+    //background-color: red;
+    text-align: center;
+    margin: 20px 20px;
+  }
+
+  &__btn {
+    @extend %btn;
+    display: inline-block;
+    width: 30%;
+    margin: 0 10px;
+
+    &--accept {
+
+    }
+
+    &--deny {
+
+    }
+  }
+}

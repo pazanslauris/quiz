@@ -56,4 +56,20 @@ class QuizDBRepository extends BaseDBRepository implements QuizRepositoryInterfa
     {
         return 'id';
     }
+
+    public function updateQuiz(QuizModel $quiz): QuizModel
+    {
+        //     * The primary key must be passed in the attributes... [ 'primary_key' => 1 ]
+        $success = $this->updateColumn([ 'id' => $quiz->id, 'name' => $quiz->name]);
+        if ($success) {
+            return $quiz;
+        }
+
+        return new QuizModel;
+    }
+
+    public function deleteQuiz(QuizModel $quiz): bool
+    {
+        return $this->delete([ 'id' => $quiz->id]);
+    }
 }

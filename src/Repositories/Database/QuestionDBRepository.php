@@ -76,4 +76,20 @@ class QuestionDBRepository extends BaseDBRepository implements QuestionRepositor
     {
         return 'id';
     }
+
+    public function updateQuestion(QuestionModel $question): QuestionModel
+    {
+        $success = $this->updateColumn([ 'id' => $question->id,
+            'question' => $question->question,
+            'question_no' => $question->questionNo]);
+        if ($success) {
+            return $question;
+        }
+        return new QuestionModel;
+    }
+
+    public function deleteQuestion(QuestionModel $question): bool
+    {
+        return $this->delete([ 'id' => $question->id, 'quiz_id' => $question->quizId]);
+    }
 }

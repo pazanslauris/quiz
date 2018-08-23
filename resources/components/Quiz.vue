@@ -1,35 +1,43 @@
 <template>
     <span>
-        <UserBar/>
+        <UserBarPanel/>
 
-        <span v-if="!user.isValid()">
-            <Login />
+        <span v-if="!user.isAdmin">
+            <span v-if="!user.isValid()">
+                <LoginPanel />
+            </span>
+
+            <span v-else-if="user.isValid() && !currentQuestion.isValid() && !result.isValid()">
+                <IntroPanel />
+            </span>
+
+            <span v-if="user.isValid() && currentQuestion.isValid()">
+                <QuestionPanel/>
+            </span>
+
+            <span v-if="result.isValid()">
+                <ResultPanel/>
+            </span>
+        </span>
+        <span v-else-if="user.isAdmin">
+            <AdminPanel />
         </span>
 
-        <span v-else-if="user.isValid() && !currentQuestion.isValid() && !result.isValid()">
-            <Intro />
-        </span>
 
-        <span v-if="user.isValid() && currentQuestion.isValid()">
-            <QuestionItem/>
-        </span>
-
-        <span v-if="result.isValid()">
-            <ResultItem/>
-        </span>
     </span>
 </template>
 
 <script>
-    import QuestionItem from "./QuestionItem";
-    import ResultItem from "./ResultItem";
-    import Intro from "./Intro";
-    import UserBar from "./UserBar";
-    import Login from "./Login";
+    import QuestionPanel from "./Panels/QuestionPanel";
+    import ResultPanel from "./Panels/ResultPanel";
+    import IntroPanel from "./Panels/IntroPanel";
+    import UserBarPanel from "./Panels/UserBarPanel";
+    import LoginPanel from "./Panels/LoginPanel";
+    import AdminPanel from "./Panels/AdminPanel";
 
     export default {
         name: 'Quiz',
-        components: {Login, UserBar, Intro, ResultItem, QuestionItem},
+        components: {AdminPanel, LoginPanel, UserBarPanel, IntroPanel, ResultPanel, QuestionPanel},
         computed: {
             user: {
                 get() {

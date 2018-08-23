@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import 'Config/breakpoints';
 
 @mixin respond-to($breakpoint) {
   @if map-has-key($breakpoints, $breakpoint) {

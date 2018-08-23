@@ -3,6 +3,8 @@
 namespace Quiz\Models;
 
 
+use Quiz\Services\QuizSessionService;
+
 class AnswerModel extends BaseModel
 {
     /** @var int */
@@ -48,6 +50,12 @@ class AnswerModel extends BaseModel
      */
     public function jsonSerialize()
     {
+        $session = QuizSessionService::getSession();
+        if ($session->isAdmin) {
+            //TODO: bad hack
+            return $this;
+        }
+
         $answer = clone $this;
         unset($answer->isCorrect);
         return (array)$answer;

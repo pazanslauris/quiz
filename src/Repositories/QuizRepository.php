@@ -47,4 +47,26 @@ class QuizRepository implements QuizRepositoryInterface
         }
         return new QuizModel;
     }
+
+    public function updateQuiz(QuizModel $newQuiz): QuizModel
+    {
+        foreach ($this->quizzes as $quiz) {
+            if ($quiz->id == $newQuiz->id) {
+                $quiz->name = $newQuiz->name;
+                return $newQuiz;
+            }
+        }
+        return new QuizModel;
+    }
+
+    public function deleteQuiz(QuizModel $oldQuiz): bool
+    {
+        foreach($this->quizzes as $key => $quiz) {
+            if($quiz->id == $oldQuiz->id){
+                unset($this->quizzes[$key]);
+                return true;
+            }
+        }
+        return false;
+    }
 }

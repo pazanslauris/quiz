@@ -20,6 +20,11 @@ class QuizAjaxController extends BaseAjaxController
         //$quizzes = $this->quizService->getAvailableQuizzes($session->userId);
 
         $quizzes = $this->quizService->getAllQuizzes();
+        //TODO: create a separate action to fetch total question count for 1 quiz
+        foreach ($quizzes as $quiz) {
+            $quiz->totalQuestionCount = sizeof($this->quizService->getQuestions($quiz->id));
+        }
+
         $response = new ResponseModel(ResponseModel::QUIZZES, $quizzes);
         return $response;
     }

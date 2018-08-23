@@ -55,4 +55,28 @@ class AnswerRepository implements AnswerRepositoryInterface
         }
         return new AnswerModel;
     }
+
+    public function updateAnswer(AnswerModel $newAnswer): AnswerModel
+    {
+        foreach($this->answers as $answer) {
+            if ($answer->id == $newAnswer->id) {
+                $answer->isCorrect = $newAnswer->isCorrect;
+                $answer->answer = $newAnswer->answer;
+                return $newAnswer;
+            }
+        }
+        return new AnswerModel;
+    }
+
+    public function deleteAnswer(AnswerModel $oldAnswer): bool
+    {
+        foreach($this->answers as $key => $answer) {
+            if($answer->id == $oldAnswer->id &&
+                $answer->questionId == $oldAnswer->questionId){
+                unset($this->answers[$key]);
+                return true;
+            }
+        }
+        return false;
+    }
 }

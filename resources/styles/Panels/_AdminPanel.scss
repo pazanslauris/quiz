@@ -1,0 +1,120 @@
+.admin {
+  background-color: $panelColor;
+  padding-bottom: 30px;
+  min-height: 100%;
+
+  $navigatorHeight: 30px;
+
+
+  &__navigator {
+    background-color: $panelColor2;
+    border-bottom: 1px solid black;
+    height: $navigatorHeight;
+    padding-left: 30px;
+    overflow:hidden;
+  }
+
+  &__navbtn {
+    font-size: 16px;
+    font-weight: bold;
+    color: blue;
+    line-height: $navigatorHeight;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &__home {
+    padding: 10px;
+  }
+
+  &__panel {
+    background-color: $panelColor2;
+    margin: 10px 20px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+
+    * {
+      font-size: 18px;
+    }
+  }
+
+  &__title {
+    text-align: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid gray;
+
+    &--small {
+      margin-top: 2px;
+      border-bottom: none;
+      margin-bottom: 5px;
+    }
+  }
+
+  &__input {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  &__selector-btn {
+    @extend %btn;
+    display: block;
+    width: 100%;
+    border-radius: 0;
+    border-bottom: 1px solid black;
+    background-color: white;
+
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background-color: #e2e2e2;
+    }
+
+    &:nth-child(odd) {
+      background-color: lightgray;
+
+      &:hover {
+        background-color: #b7b7b7;
+      }
+    }
+  }
+
+  &__selector-container {
+    margin-top: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  &__btn {
+    @extend %btn;
+    display: inline-block;
+    width: 200px;
+    background-color: white;
+    border: 1px solid black;
+    padding: 4px 10px;
+    margin: 5px 5px;
+
+    &:hover {
+      background-color: lightgray;
+    }
+  }
+
+  &__add-btn {
+    @extend %btn;
+    margin: 10px auto;
+  }
+
+  &__controls {
+    text-align: center;
+    display: block;
+  }
+
+  &__input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

@@ -7,7 +7,7 @@
 
 <script>
     import {mapActions} from 'vuex';
-    import SelectDropdown from "./forms/select.dropdown";
+    import SelectDropdown from "../forms/select.dropdown";
 
     export default {
         name: 'QuizStartItem',

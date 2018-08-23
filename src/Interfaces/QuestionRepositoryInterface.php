@@ -14,4 +14,8 @@ interface QuestionRepositoryInterface
     public function getQuestion(int $questionId): QuestionModel;
 
     public function getQuestionByNo(int $quizId, int $questionNo): QuestionModel;
+
+    public function updateQuestion(QuestionModel $question): QuestionModel;
+
+    public function deleteQuestion(QuestionModel $question): bool;
 }

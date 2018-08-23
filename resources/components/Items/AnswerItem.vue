@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import Answer from "../models/model.answer";
+    import Answer from "../../models/model.answer";
 
     export default {
         name: 'AnswerItem',

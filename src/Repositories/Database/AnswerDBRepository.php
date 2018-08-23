@@ -45,4 +45,21 @@ class AnswerDBRepository extends BaseDBRepository implements AnswerRepositoryInt
     {
         return 'id';
     }
+
+    public function updateAnswer(AnswerModel $answer): AnswerModel
+    {
+        $success = $this->updateColumn([ 'id' => $answer->id,
+            'answer' => $answer->answer,
+            'is_correct' => $answer->isCorrect]);
+        if ($success) {
+            return $answer;
+        }
+        return new AnswerModel;
+    }
+
+
+    public function deleteAnswer(AnswerModel $answer): bool
+    {
+        return $this->delete([ 'id' => $answer->id, 'question_id' => $answer->questionId]);
+    }
 }

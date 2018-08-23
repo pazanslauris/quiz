@@ -1,5 +1,4 @@
 import Api from '../api.js';
-import Response from "../models/model.response";
 
 class QuizRepository {
     constructor() {
@@ -7,43 +6,15 @@ class QuizRepository {
     }
 
     getAllQuizzes() {
-        return new Promise(resolve => {
-            this.quizApi.get('getQuizzes')
-                .then(response => {
-                    let responseModel = Response.fromArray(response.data);
-                    resolve(responseModel);
-                })
-        })
+        return this.quizApi.getResponseAsync('getQuizzes');
     }
 
     startQuiz(quizId) {
-        return new Promise(resolve => {
-            this.quizApi.post('startQuiz', {quizId})
-                .then(response => {
-                    let responseModel = Response.fromArray(response.data);
-                    resolve(responseModel);
-                })
-        })
+        return this.quizApi.getResponseAsync('startQuiz', {quizId});
     }
 
     submitAnswer(answerId) {
-        return new Promise(resolve => {
-            this.quizApi.post('submitAndLoadNextQuestion', {answerId})
-                .then(response => {
-                    let responseModel = Response.fromArray(response.data);
-                    resolve(responseModel);
-                })
-        })
-    }
-
-    logout() {
-        return new Promise(resolve => {
-            this.quizApi.post('logout')
-                .then(response => {
-                    let responseModel = Response.fromArray(response.data);
-                    resolve(responseModel);
-                })
-        })
+        return this.quizApi.getResponseAsync('submitAndLoadNextQuestion', {answerId});
     }
 }
 

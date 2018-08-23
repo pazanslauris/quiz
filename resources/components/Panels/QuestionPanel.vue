@@ -6,13 +6,17 @@
                 <AnswerItem :is-active="(answer.id === answerId)" :answer="answer" :on-answered="onAnswerPicked"></AnswerItem>
             </li>
         </ul>
+        <ProgressBarItem class="answers__progress-bar" />
+        <ErrorMessageItem />
         <button class="viewer__btn" @click="onAnswered">Next question</button>
     </div>
 </template>
 
 <script>
     import {mapActions} from 'vuex';
-    import AnswerItem from "./AnswerItem";
+    import AnswerItem from "../Items/AnswerItem";
+    import ProgressBarItem from "../Items/ProgressBarItem";
+    import ErrorMessageItem from "../Items/ErrorMessageItem";
 
     export default {
         data() {
@@ -20,8 +24,8 @@
                 answerId: null,
             }
         },
-        name: "QuestionItem",
-        components: {AnswerItem},
+        name: "QuestionPanel",
+        components: {AnswerItem, ProgressBarItem, ErrorMessageItem},
         computed: {
             question: {
                 get() {
@@ -42,6 +46,7 @@
                     return;
                 }
                 this.submitAnswer(this.answerId);
+                this.answerId = null;
             }
         }),
     }

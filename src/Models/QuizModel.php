@@ -9,11 +9,14 @@ class QuizModel extends BaseModel
     public $id;
     /** @var string */
     public $name;
+    /** @var int */
+    public $totalQuestionCount;
 
-    public function __construct(int $id = 0, string $name = '')
+    public function __construct(int $id = 0, string $name = '', int $totalQuestionCount = 0)
     {
         $this->id = $id;
         $this->name = $name;
+        $this->totalQuestionCount = $totalQuestionCount;
     }
 
     /**

@@ -12,6 +12,11 @@ module.exports = {
                 target: 'http://quiz.test/',
                 ws: true,
                 changeOrigin: true
+            },
+            'AdminAjax': {
+                target: 'http://quiz.test/',
+                ws: true,
+                changeOrigin: true
             }
         }
     },

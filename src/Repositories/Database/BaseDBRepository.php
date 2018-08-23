@@ -142,6 +142,15 @@ abstract class BaseDBRepository implements DBRepositoryInterface
         return $result;
     }
 
+    public function delete(array $attributes): bool
+    {
+        $table = static::getTableName();
+        $primaryKey = static::getPrimaryKey();
+
+        $result = static::getConnection()->delete($table, $primaryKey, $attributes);
+        return $result;
+    }
+
     public function save($model): int
     {
         //TODO: implement
